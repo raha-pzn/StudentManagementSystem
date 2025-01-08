@@ -1,0 +1,18 @@
+﻿@model List<string>
+
+@{
+    ViewData["Title"] = "Student Names";
+}
+
+<h1 class="text-center mb-4">Student Names</h1>
+
+<div class="list-group">
+    @foreach (var name in Model)
+    {
+            <div class="list-group-item">@name</div>
+    }
+</div>
+
+<div class="mt-4">
+    <a asp-controller="Students" asp-action="Index" class="btn btn-secondary">Back to Students</a>
+</div>

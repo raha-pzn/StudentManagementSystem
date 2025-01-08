@@ -1,0 +1,19 @@
+﻿@model StudentManagementSystem.Models.Student
+
+<h1>Student Details</h1>
+
+<div>
+    <h4>@Model.StudentName</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">University</dt>
+        <dd class="col-sm-10">@Model.University.UniversityName</dd>
+        <dt class="col-sm-2">Faculty</dt>
+        <dd class="col-sm-10">@Model.Faculty.FacultyName</dd>
+        <dt class="col-sm-2">Number of Units</dt>
+        <dd class="col-sm-10">@Model.NumberOfUnits</dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>

@@ -1,0 +1,54 @@
+﻿@model StudentManagementSystem.Models.Faculty
+
+@{
+    ViewData["Title"] = "Faculty Details";
+}
+
+<h1>Faculty Details</h1>
+
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">@Model.FacultyName</h4>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-2">Faculty ID</dt>
+            <dd class="col-sm-10">@Model.FacultyID</dd>
+
+            <dt class="col-sm-2">University</dt>
+            <dd class="col-sm-10">
+                @if (Model.University != null)
+                {
+                    @Model.University.UniversityName
+                }
+                else
+                {
+                    <span class="text-muted">No university assigned.</span>
+                }
+            </dd>
+
+            <dt class="col-sm-2">Courses</dt>
+            <dd class="col-sm-10">
+                @if (Model.Courses != null && Model.Courses.Any())
+                {
+                    <ul>
+                        @foreach (var course in Model.Courses)
+                        {
+                            <li>@course.CourseName</li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <p>No courses found for this faculty.</p>
+                }
+            </dd>
+        </dl>
+    </div>
+</div>
+
+<div class="mt-3">
+    <!-- Link to update the faculty name -->
+    <a asp-action="UpdateFacultyName" asp-route-id="@Model.FacultyID" class="btn btn-warning">Update Faculty Name</a>
+    <!-- Link to go back to the list of faculties -->
+    <a asp-controller="Universities" asp-action="Faculties" asp-route-id="@Model.UniversityID" class="btn btn-secondary">Back to Faculties</a>
+</div>

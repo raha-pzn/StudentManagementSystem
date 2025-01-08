@@ -1,0 +1,27 @@
+﻿@model StudentManagementSystem.Models.University
+
+<h1>Faculties of @Model.UniversityName</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Faculty Name</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var faculty in Model.Faculties)
+        {
+            <tr>
+                <td>@faculty.FacultyName</td>
+                <td>
+                    <a asp-controller="Faculties" asp-action="Details" asp-route-id="@faculty.FacultyID">Details</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div>
+    <a asp-controller="Students" asp-action="Index">Back to Students</a>
+</div>
