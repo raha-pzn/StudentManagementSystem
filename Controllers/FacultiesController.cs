@@ -53,36 +53,67 @@ namespace StudentManagementSystem.Controllers
 
         // POST: /Faculties/UpdateFacultyName/5
         [HttpPost]
-        public async Task<IActionResult> UpdateFacultyName(int id, string newFacultyName)
+        public async Task<IActionResult> UpdateFacultyName(int id, [Bind("FacultyID,FacultyName,UniversityID")] Faculty faculty)
         {
-            if (string.IsNullOrEmpty(newFacultyName))
+            if (ModelState.IsValid)
             {
-                ModelState.AddModelError("FacultyName", "Faculty name cannot be empty.");
-                return View(await _context.Faculties.FindAsync(id));
-            }
-
-            // Get the connection string from appsettings.json
-            string connectionString = _configuration.GetConnectionString("DefaultConnection");
-
-            using (var connection = new SqlConnection(connectionString))
-            {
-                await connection.OpenAsync();
-                using (var command = new SqlCommand("UpdateFacultyName", connection))
+                try
                 {
-                    // Specify that this is a stored procedure
-                    command.CommandType = System.Data.CommandType.StoredProcedure;
+                    // Log the values for debugging
+                    Console.WriteLine($"FacultyID: {faculty.FacultyID}, FacultyName: {faculty.FacultyName}, UniversityID: {faculty.UniversityID}");
 
-                    // Add parameters
-                    command.Parameters.AddWithValue("@FacultyID", id);
-                    command.Parameters.AddWithValue("@NewFacultyName", newFacultyName);
+                    // Get the connection string from appsettings.json
+                    string connectionString = _configuration.GetConnectionString("DefaultConnection");
 
-                    // Execute the stored procedure
-                    await command.ExecuteNonQueryAsync();
+                    using (var connection = new SqlConnection(connectionString))
+                    {
+                        await connection.OpenAsync();
+                        using (var command = new SqlCommand("UpdateFacultyName", connection))
+                        {
+                            // Specify that this is a stored procedure
+                            command.CommandType = System.Data.CommandType.StoredProcedure;
+
+                            // Add parameters
+                            command.Parameters.AddWithValue("@FacultyID", faculty.FacultyID);
+                            command.Parameters.AddWithValue("@NewFacultyName", faculty.FacultyName);
+
+                            // Execute the stored procedure
+                            await command.ExecuteNonQueryAsync();
+                        }
+                    }
+
+                    // Redirect to the Details page to see the updated faculty
+                    return RedirectToAction(nameof(Details), new { id = faculty.FacultyID });
+                }
+                catch (SqlException ex)
+                {
+                    // Log the SQL exception
+                    ModelState.AddModelError(string.Empty, "An error occurred while updating the faculty name. Please try again later.");
+                }
+                catch (Exception ex)
+                {
+                    // Log the general exception
+                    ModelState.AddModelError(string.Empty, "An unexpected error occurred. Please try again later.");
                 }
             }
+            else
+            {
+                // Log ModelState errors for debugging
+                foreach (var key in ModelState.Keys)
+                {
+                    var errors = ModelState[key].Errors;
+                    foreach (var error in errors)
+                    {
+                        Console.WriteLine($"ModelState Error - Key: {key}, Error: {error.ErrorMessage}");
+                    }
+                }
 
-            // Redirect to the Details page to see the updated faculty
-            return RedirectToAction(nameof(Details), new { id = id });
+                // Add a general error message for the user
+                ModelState.AddModelError(string.Empty, "Please correct the errors and try again.");
+            }
+
+            // If the model state is invalid or an exception occurred, return to the form with validation errors
+            return View(faculty);
         }
     }
 }

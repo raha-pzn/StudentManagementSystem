@@ -14,7 +14,7 @@ namespace StudentManagementSystem.Models
 
         // Foreign key for university
         public int UniversityID { get; set; }
-        public University University { get; set; }
+        public University? University { get; set; }
 
         // Navigation property for courses
         public ICollection<Course> Courses { get; set; } = new List<Course>();

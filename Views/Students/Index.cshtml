@@ -17,11 +17,7 @@
         {
             <tr>
                 <td>@student.StudentName</td>
-                <td>
-                    <a asp-controller="Universities" asp-action="Faculties" asp-route-id="@student.UniversityID">
-                        @student.University.UniversityName
-                    </a>
-                </td>
+                <td>@student.University.UniversityName</td>
                 <td>@student.Faculty.FacultyName</td>
                 <td>@student.NumberOfUnits</td>
                 <td><a asp-action="Details" asp-route-id="@student.StudentID">Details</a></td>

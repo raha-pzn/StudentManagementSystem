@@ -1,0 +1,35 @@
+﻿@model IEnumerable<StudentManagementSystem.Models.Master>
+
+@{
+    ViewData["Title"] = "Masters";
+}
+
+<h1>Masters</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var master in Model)
+        {
+            <tr>
+                <td>@master.FirstName</td>
+                <td>@master.LastName</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@master.Id" class="btn btn-info">Details</a>
+                    <a asp-action="Edit" asp-route-id="@master.Id" class="btn btn-warning">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@master.Id" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

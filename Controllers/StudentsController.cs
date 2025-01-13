@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using StudentManagementSystem.Data;
 using StudentManagementSystem.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,12 +14,13 @@ namespace StudentManagementSystem.Controllers
     public class StudentsController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly IConfiguration _configuration;
+        private readonly IConfiguration _configuration; // Declare _configuration
 
+        // Constructor: Initialize _context and _configuration via dependency injection
         public StudentsController(ApplicationDbContext context, IConfiguration configuration)
         {
             _context = context;
-            _configuration = configuration;
+            _configuration = configuration; // Initialize _configuration
         }
 
         // GET: /Students
@@ -47,6 +47,40 @@ namespace StudentManagementSystem.Controllers
             }
 
             return View(student);
+        }
+
+        // GET: /Students/Names
+        public async Task<IActionResult> Names()
+        {
+            var studentNames = new List<string>();
+
+            // Get the connection string from appsettings.json
+            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+
+            // Execute the stored procedure
+            using (var connection = new SqlConnection(connectionString))
+            {
+                await connection.OpenAsync();
+                using (var command = new SqlCommand("GetStudentNames", connection))
+                {
+                    command.CommandType = System.Data.CommandType.StoredProcedure;
+
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            string name = reader["StudentName"].ToString();
+                            if (!string.IsNullOrEmpty(name))
+                            {
+                                studentNames.Add(name);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Pass the list of student names to the view
+            return View(studentNames);
         }
 
         // GET: /Students/Create
@@ -127,39 +161,6 @@ namespace StudentManagementSystem.Controllers
                 .ToList();
 
             return View(student);
-        }
-
-        // GET: /Students/Names
-        public async Task<IActionResult> Names()
-        {
-            var studentNames = new List<string>();
-
-            // Get the connection string from appsettings.json
-            string connectionString = _configuration.GetConnectionString("DefaultConnection");
-
-            // Execute the stored procedure
-            using (var connection = new SqlConnection(connectionString))
-            {
-                await connection.OpenAsync();
-                using (var command = new SqlCommand("GetStudentNames", connection))
-                {
-                    // Specify that this is a stored procedure
-                    command.CommandType = System.Data.CommandType.StoredProcedure;
-
-                    // Execute the stored procedure
-                    using (var reader = await command.ExecuteReaderAsync())
-                    {
-                        while (await reader.ReadAsync())
-                        {
-                            string name = reader["StudentName"].ToString();
-                            studentNames.Add(name);
-                        }
-                    }
-                }
-            }
-
-            // Pass the list of student names to the view
-            return View(studentNames);
         }
     }
 }
